@@ -3,9 +3,33 @@ import PropTypes from 'prop-types';
 import PlanetsContext from '../context/PlanetsContext';
 import { getPlanetsStarWars } from '../services/starWarsAPI';
 
+// filters: {
+//   filterByName: {
+//     name: ''
+//   },
+//   filterByNumericValues: [
+//     {
+//       column: 'population',
+//       comparison: 'maior que',
+//       value: '100000',
+//     },
+//     {
+//       column: 'diameter',
+//       comparison: 'menor que',
+//       value: '8000',
+//     }
+//   ]
+// }
+
 function PlanetsProvider({ children }) {
   const [data, setData] = useState([]);
   const [dataBkp, setDataBkp] = useState([]);
+  const [filters, setFilters] = useState({
+    filterByName: {
+      name: '',
+    },
+    filterByNumericValues: [],
+  });
 
   useEffect(() => {
     const getPlanets = async () => {
@@ -26,7 +50,19 @@ function PlanetsProvider({ children }) {
     // console.log(`Planets Provider: ${data[0].name}`);
   }, []);
 
-  const context = { data, setData, dataBkp, setDataBkp };
+  useEffect(() => {
+    const filterByNameFunc = (name) => dataBkp.filter(
+      (planet) => planet.name.includes(`${name}`),
+    );
+
+    const { filterByName } = filters;
+
+    if (filterByName) {
+      setData(filterByNameFunc(filterByName.name));
+    }
+  }, [dataBkp, filters]);
+
+  const context = { data, setData, dataBkp, setDataBkp, filters, setFilters };
 
   return (
     <PlanetsContext.Provider value={ context }>

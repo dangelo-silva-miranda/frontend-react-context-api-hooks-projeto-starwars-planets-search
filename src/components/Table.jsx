@@ -2,27 +2,28 @@ import React, { useContext } from 'react';
 // import PropTypes from 'prop-types';
 import PlanetsContext from '../context/PlanetsContext';
 import Row from './Row';
+import '../css/table.css';
 
 /*
   Material consultado sobre renderização condicional:
   https://flexiple.com/blog/conditional-rendering-in-react/
  */
 function Table(/* props */) {
-  const { data } = useContext(PlanetsContext);
+  const { data, dataBkp } = useContext(PlanetsContext);
 
   return (
-    <main>
-      {data.length && (
-        <table>
-          <caption>
-            Table with filters of planets from the Star Wars universe
-          </caption>
-          <thead>
-            <Row
-              CellTag="th"
-              dataList={ Object.keys(data[0]) }
-            />
-          </thead>
+    <section>
+      <table>
+        <caption>
+          Table with filters of planets from the Star Wars universe
+        </caption>
+        <thead>
+          <Row
+            CellTag="th"
+            dataList={ Object.keys(dataBkp[0] || []) }
+          />
+        </thead>
+        {data.length > 0 && (
           <tbody>
             {data.map(
               (planet, index) => (
@@ -34,9 +35,9 @@ function Table(/* props */) {
               ),
             )}
           </tbody>
-        </table>
-      )}
-    </main>
+        )}
+      </table>
+    </section>
   );
 }
 export default Table;
