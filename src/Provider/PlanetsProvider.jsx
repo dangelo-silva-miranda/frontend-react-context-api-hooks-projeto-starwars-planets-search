@@ -50,16 +50,45 @@ function PlanetsProvider({ children }) {
     // console.log(`Planets Provider: ${data[0].name}`);
   }, []);
 
+  /*
+    Material consultado sobre Number.parseInt
+    https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Number/parseInt
+  */
   useEffect(() => {
     const filterByNameFunc = (name) => dataBkp.filter(
       (planet) => planet.name.includes(`${name}`),
     );
 
-    const { filterByName } = filters;
+    const filterByNumericValueFunc = ({ column, comparison, value }, planet) => {
+      const planetValue = Number.parseInt(planet[column], 10);
+      const filterValue = Number.parseInt(value, 10);
 
-    if (filterByName) {
-      setData(filterByNameFunc(filterByName.name));
+      switch (comparison) {
+      case 'maior que':
+        return planetValue > filterValue;
+
+      case 'menor que':
+        return planetValue < filterValue;
+
+      default:
+        return planetValue === filterValue;
+      }
+    };
+
+    const { filterByName: { name }, filterByNumericValues } = filters;
+    let dataTemp = dataBkp;
+
+    if (name) {
+      dataTemp = filterByNameFunc(name);
     }
+
+    if (filterByNumericValues && filterByNumericValues.length) {
+      dataTemp = dataTemp.filter((planet) => (
+        filterByNumericValues.every((filter) => filterByNumericValueFunc(filter, planet))
+      ));
+    }
+
+    setData(dataTemp);
   }, [dataBkp, filters]);
 
   const context = { data, setData, dataBkp, setDataBkp, filters, setFilters };
@@ -74,6 +103,6 @@ function PlanetsProvider({ children }) {
 
 PlanetsProvider.propTypes = {
   children: PropTypes.node.isRequired,
-};
+}.isRequired;
 
 export default PlanetsProvider;

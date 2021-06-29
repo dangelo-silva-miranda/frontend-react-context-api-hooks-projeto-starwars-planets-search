@@ -1,5 +1,6 @@
 import React from 'react';
 import FilterByName from './FilterByName';
+import FilterByNumericValues from './FilterByNumericValues';
 
 /*
   Material consultado sobre html semântico para filtro
@@ -9,6 +10,7 @@ function Filters() {
   return (
     <section role="search">
       <FilterByName />
+      <FilterByNumericValues />
     </section>
   );
 }
